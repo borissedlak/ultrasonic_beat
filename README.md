@@ -31,7 +31,7 @@ Standardteile aus Bauteilsatz:
 
 # Schaltplan
 
-# ![](/assets/schaltplan_Steckplatine_cropped.jpg)
+# ![](/img/platine.jpg )
 
 # Motorübersetzung
 
@@ -87,7 +87,7 @@ break;
 
 Treffen Reflexionen in einer gewissen Distanz zum Sensor werden diese in einem Halbkreis dargestellt der an ein Sonar erinnert. Abhängig von der über die serielle Schnittstelle übertragenen Distanz (im Punkt Arduino beschrieben) wird ein entsprechender Bereich, einer der Ringe, in einer eindeutigen, unterscheidbaren Farbe hervorgehoben. Der größte Halbkreis stellt den Bereich der entferntesten Reflexionen dar, der kleinste Halbkreis den Bereich der dem Sensor am nähesten ist.
 
-![](/assets/Picture_Visual.jpg)
+![](/img/visual.jpg)
 
 
 Der rote Bereich im unteren Teil der Grafik stellt den Radius dar, in dem Reflexionen kein Resultat nach sich ziehen, der Mindestabstand wurde nicht eingehalten. Rechts unten in der Grafik sind Entfernungen notiert, welche dem Abstand entsprechen der benötigt wird um einen der Ringe zu aktivieren und gleichzeitig einen Sound zu erzeugen.
