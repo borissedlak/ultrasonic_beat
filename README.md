@@ -39,7 +39,7 @@ Wie im Bild zu sehen ist, habe ich für die Übersetzung des Motors auf den Ultr
 
 Man sieht durch das rechte Rad die Kabelverbindung vom Sensor in Richtung Arduino laufen. Rechts unten im Bild ist der essentielle Schleifkontakt zu sehen, der die Rotation der Kabel kompensiert. Die Räder für den Bandantrieb, der Stab im Rad, sowie der Aufbau des rechten Rads zum Ultraschallsensor stammen aus diversen Lego Bausätzen. Geklebt wurde an mehreren Stellen mit Sekundenkleber, im Falle des Podests mit Montagekleber.
 
-![](/assets/Picture_Motor.jpg)
+![](/img/motor.jpg )
 
 # Serielle Schnittstelle
 
