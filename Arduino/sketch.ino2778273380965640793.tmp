@@ -1,0 +1,159 @@
+#include <Servo.h>
+#include <IRremote.h>
+
+Servo myservo;
+
+int val = 0;
+int mappedVal = 0;
+int speedVal = 75;
+
+long duration;
+int distance;
+
+const int trigPin = 1;
+const int echoPin = 2 ;
+const int recvrPin = 10;
+
+IRrecv irrecv(recvrPin);
+decode_results results;
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  irrecv.enableIRIn(); // Start the receiver
+  myservo.attach(9); // servo digital pin 9
+  myservo.write(speedVal);
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+}
+
+void loop()
+{
+  //checkSpeed();
+  checkDistance();
+  checkRemote();
+}
+
+void checkRemote()
+{
+  if (irrecv.decode(&results)) {
+    translateIR();
+    Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+  }
+  //delay(100);
+}
+
+void checkSpeed()
+{
+  val = analogRead(0);
+  mappedVal = map(val, 0, 1021, 60, 120);
+  //Serial.println(mappedVal);
+  myservo.write(mappedVal);
+}
+
+void checkDistance()
+{
+  //digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(8);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  //Serial.println(distance);
+  if (constrain(distance, 15, 60)) {
+    Serial.write(map(distance, 15, 60, 1, 8));
+    //Serial.println(distance);
+  }
+}
+
+void translateIR()
+{
+  switch (results.value)
+  {
+    case 0xFF629D:
+      // VOL+
+      break;
+
+    case 0xFFA857:
+      // VOL-
+      break;
+
+    case 0xFF906F:
+      // CH+
+      speedVal -= 5;
+      myservo.write(speedVal);
+      break;
+
+    case 0xFFE01F:
+      // CH-
+      speedVal += 5;
+      myservo.write(speedVal);
+      break;
+
+    case 0xFF22DD:
+      // >>|
+      break;
+
+    case 0xFF02FD:
+      // |<<
+      break;
+
+    case 0xFFC23D:
+      // >||
+      break;
+
+    case 0xFF6897:
+      // 0
+      speedVal = 75;
+      myservo.write(speedVal);
+      break;
+    
+    case 0xFF30CF:
+      // 1
+      break;
+
+    case 0xFF18E7:
+      // 2
+      break;
+
+    case 0xFF7A85:
+      // 3
+      break;
+
+    case 0xFF10EF:
+      // 4
+      break;
+
+    case 0xFF38C7:
+      // 5
+      break;
+
+    case 0xFF5AA5:
+      // 6
+      break;
+
+    case 0xFF42BD:
+      // 7
+      break;
+
+    case 0xFF4AB5:
+      // 8
+      break;
+
+    case 0xFF52AD:
+      // 9
+      break;
+
+    default:
+      // ??
+      break;
+  }
+  //delay(500);
+}

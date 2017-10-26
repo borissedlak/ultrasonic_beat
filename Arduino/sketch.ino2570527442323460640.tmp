@@ -1,0 +1,58 @@
+#include <Servo.h>
+#include <IRremote.h>
+
+Servo myservo;
+
+int val = 0;
+int mappedVal = 0;
+
+long duration;
+int distance;
+
+const int trigPin = 1;
+const int echoPin = 2 ;
+const int recvrPin = 10;
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  myservo.attach(9); // servo digital pin 9
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+}
+
+void loop()
+{
+  checkSpeed();
+  checkDistance();  
+}
+
+void checkSpeed()
+{
+  val = analogRead(0);
+  mappedVal = map(val, 0, 1021, 60, 120);
+  //Serial.println(mappedVal);
+  myservo.write(mappedVal);
+}
+
+void checkDistance()
+{
+  //digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(8);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  //Serial.println(distance);
+  if(constrain(distance,15,60)){
+    Serial.write(map(distance,15,60,1,8));
+    //Serial.println(distance);
+  }
+}
+

@@ -1,0 +1,71 @@
+import processing.sound.*;
+import processing.serial.*;
+
+SoundFile chant, clap, hat, kick, sax_loop, snare;
+Serial myPort;
+int input = 0;
+long startTime = 0;
+int duration;
+int lastState;
+
+void setup() {
+  size(640, 360);
+  background(255);
+  //println(Serial.list());
+  String portName = Serial.list()[0];
+  myPort = new Serial(this, portName, 9600);
+    
+  // Load a soundfile from the /data folder of the sketch and play it back
+  chant = new SoundFile(this, "chant.wav");
+  clap = new SoundFile(this, "clap.wav");
+  hat = new SoundFile(this, "hat.wav");
+  kick = new SoundFile(this, "kick.wav");
+  sax_loop = new SoundFile(this, "sax_loop.wav");
+  snare = new SoundFile(this, "snare.wav");
+  //sax_loop.loop();
+}      
+
+void draw() {
+  while(myPort.available() > 0) {
+    input = myPort.read();
+    checkInput(input);
+  }
+}
+
+void checkInput(int val){
+    println(val);
+  
+  //if(lastState != val){
+    //lastState = val;
+    //return;
+  //}
+  
+  switch(val){
+    case 1: 
+      playSound(kick);
+      break;
+    case 2: 
+      playSound(clap);
+      break;
+    case 3: 
+      playSound(snare);
+      break;
+    case 4: 
+      playSound(chant);
+      break;
+  }
+}
+
+void playSound(SoundFile file){
+  long currentTime = System.nanoTime();
+  if((startTime + duration) < currentTime){
+    startTime = System.nanoTime();
+    duration = (int)(file.duration() * 1000000000);
+    //println("Case 1: "+duration);
+    file.play(1,0.5);
+  }
+  else{
+    //println("Current:"+currentTime+", Goal:"+(startTime+duration));
+  }
+  
+}

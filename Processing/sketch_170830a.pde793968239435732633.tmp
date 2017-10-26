@@ -1,0 +1,96 @@
+import processing.sound.*;
+import processing.serial.*;
+
+SoundFile chant, clap, hat, kick, sax_loop, snare;
+Serial myPort;
+int input = 0;
+long startTime = 0;
+int duration;
+float loudness = 1f;
+
+void setup() {
+  size(700, 700);
+  background(255);
+  //println(Serial.list());
+  String portName = Serial.list()[1];
+  myPort = new Serial(this, portName, 9600);
+
+  // Load a soundfile from the /data folder of the sketch and play it back
+  chant = new SoundFile(this, "chant.wav");
+  clap = new SoundFile(this, "clap.wav");
+  hat = new SoundFile(this, "hat.wav");
+  kick = new SoundFile(this, "kick.wav");
+  sax_loop = new SoundFile(this, "sax_loop.wav");
+  snare = new SoundFile(this, "snare.wav");
+  //sax_loop.loop();
+}      
+
+void draw() {
+  drawRadar();
+  while (myPort.available() > 0) {
+    input = myPort.read();
+    //checkInput(input);
+  }
+}
+
+void checkInput(int val) {
+  println(val);
+
+  switch(val) {
+  case 1: 
+    playSound(kick);
+    break;
+  case 2: 
+    playSound(clap);
+    break;
+  case 3: 
+    playSound(snare);
+    break;
+  case 4: 
+    playSound(chant);
+    break;
+  case 72: 
+    loudness *= 2;
+    break;
+  case 76: 
+    loudness /= 2;
+    break;
+  case 90: 
+    loudness = 1f;
+    break;
+  }
+}
+
+void playSound(SoundFile file) {
+  long currentTime = System.nanoTime();
+  if ((startTime + duration) < currentTime) {
+    startTime = System.nanoTime();
+    duration = (int)(file.duration() * 1000000000);
+    //println("Case 1: "+duration);
+    file.play(1, loudness);
+  } else {
+    //println("Current:"+currentTime+", Goal:"+(startTime+duration));
+  }
+}
+
+void drawRadar() {
+  pushMatrix();
+  translate(350, 350); // moves the starting coordinats to new location
+  noFill();
+  strokeWeight(2);
+  stroke(98, 245, 31);
+  // draws the arc lines
+  arc(0, 0, 1800, 1800, PI, TWO_PI);
+  arc(0, 0, 1400, 1400, PI, TWO_PI);
+  arc(0, 0, 1000, 1000, PI, TWO_PI);
+  arc(0, 0, 600, 600, PI, TWO_PI);
+  // draws the angle lines
+  line(-960, 0, 960, 0);
+  line(0, 0, -960*cos(radians(30)), -960*sin(radians(30)));
+  line(0, 0, -960*cos(radians(60)), -960*sin(radians(60)));
+  line(0, 0, -960*cos(radians(90)), -960*sin(radians(90)));
+  line(0, 0, -960*cos(radians(120)), -960*sin(radians(120)));
+  line(0, 0, -960*cos(radians(150)), -960*sin(radians(150)));
+  line(-960*cos(radians(30)), 0, 960, 0);
+  popMatrix();
+}

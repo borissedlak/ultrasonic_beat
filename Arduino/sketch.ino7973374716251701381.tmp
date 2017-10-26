@@ -1,0 +1,171 @@
+#include <Servo.h>
+#include <IRremote.h>
+
+Servo myservo;
+
+int val = 0;
+int mappedVal = 0;
+
+long duration;
+int distance;
+
+const int trigPin = 1;
+const int echoPin = 2 ;
+const int recvrPin = 10;
+
+IRrecv irrecv(recvrPin);
+decode_results results;
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  irrecv.enableIRIn(); // Start the receiver
+  myservo.attach(9); // servo digital pin 9
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+}
+
+void loop()
+{
+  //checkSpeed();
+  //checkDistance();
+  checkRemote();
+}
+
+void checkRemote()
+{
+  if (irrecv.decode(&results)) {
+    translateIR(); 
+    //Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+  }
+  //delay(100);
+}
+
+void checkSpeed()
+{
+  val = analogRead(0);
+  mappedVal = map(val, 0, 1021, 60, 120);
+  //Serial.println(mappedVal);
+  myservo.write(mappedVal);
+}
+
+void checkDistance()
+{
+  //digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(8);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  //Serial.println(distance);
+  if(constrain(distance,15,60)){
+    Serial.write(map(distance,15,60,1,8));
+    //Serial.println(distance);
+  }
+}
+
+void translateIR() // takes action based on IR code received
+
+// describing Car MP3 IR codes 
+
+{
+
+  switch(results.value)
+  {
+    
+  case 0xFFA25D:  
+    Serial.println(" CH-            "); 
+    break;
+
+  case 0xFF629D:  
+    Serial.println(" CH             "); 
+    break;
+
+  case 0xFFE21D:  
+    Serial.println(" CH+            "); 
+    break;
+
+  case 0xFF22DD:  
+    Serial.println(" PREV           "); 
+    break;
+
+  case 0xFF02FD:  
+    Serial.println(" NEXT           "); 
+    break;
+
+  case 0xFFC23D:  
+    Serial.println(" PLAY/PAUSE     "); 
+    break;
+
+  case 0xFFE01F:  
+    Serial.println(" VOL-           "); 
+    break;
+
+  case 0xFFA857:  
+    Serial.println(" VOL+           "); 
+    break;
+
+  case 0xFF906F:  
+    Serial.println(" EQ             "); 
+    break;
+
+  case 0xFF6897:  
+    Serial.println(" 0              "); 
+    break;
+
+  case 0xFF9867:  
+    Serial.println(" 100+           "); 
+    break;
+
+  case 0xFFB04F:  
+    Serial.println(" 200+           "); 
+    break;
+
+  case 0xFF30CF:  
+    Serial.println(" 1              "); 
+    break;
+
+  case 0xFF18E7:  
+    Serial.println(" 2              "); 
+    break;
+
+  case 0xFF7A85:  
+    Serial.println(" 3              "); 
+    break;
+
+  case 0xFF10EF:  
+    Serial.println(" 4              "); 
+    break;
+
+  case 0xFF38C7:  
+    Serial.println(" 5              "); 
+    break;
+
+  case 0xFF5AA5:  
+    Serial.println(" 6              "); 
+    break;
+
+  case 0xFF42BD:  
+    Serial.println(" 7              "); 
+    break;
+
+  case 0xFF4AB5:  
+    Serial.println(" 8              "); 
+    break;
+
+  case 0xFF52AD:  
+    Serial.println(" 9              "); 
+    break;
+
+  default: 
+    Serial.println(" other button   ");
+  }
+  //delay(500);
+}
